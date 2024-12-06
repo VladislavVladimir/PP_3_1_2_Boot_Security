@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
+</head>
+<body>
+<h1>Welcome to Admin PAGE!</h1>
+<h1>На этой странице могут быть только админы!</h1>
+<h2 class="info-text">Вы очень крутые.</h2>
+<br>
+
+<div>
+    <a th:href="@{/admin/users}" class="button">Перейти к списку пользователей</a>
+    <br><br>
+    <a href="/admin/create" class="button">Добавить нового пользователя</a>
+    <br><br>
+    <a th:href="@{/user}" class="button">Здесь подробная информация вашего профиля</a>
+    <br><br>
+    <a th:href="@{/logout}" class="button">Выйти из профиля</a>
+</div>
+</body>
+</html>

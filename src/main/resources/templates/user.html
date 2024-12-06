@@ -1,11 +1,52 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Spring Security Example</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
 </head>
 <body>
 <h1>User, welcome spring boot security page!</h1>
+<h2>На этой странице могут быть только авторизованные пользователи!</h2>
+<br>
+<div class="profile-container" th:object="${user}">
+    <h2>Профиль пользователя</h2>
+    <div class="profile-item">
+        <label>Дата регистрации:</label>
+        <span th:text="*{timeRegister}"></span>
+    </div>
+    <div class="profile-item">
+        <label>Логин:</label>
+        <span th:text="*{username}"></span>
+    </div>
+    <div class="profile-item">
+        <label>Имя:</label>
+        <span th:text="*{name}"></span>
+    </div>
+    <div class="profile-item">
+        <label>Фамилия:</label>
+        <span th:text="*{lastName}"></span>
+    </div>
+    <div class="profile-item">
+        <label>Возраст:</label>
+        <span th:text="*{age}"></span>
+    </div>
+    <div class="profile-item">
+        <label>Электронная почта:</label>
+        <span th:text="*{email}"></span>
+    </div>
+    <div class="profile-item">
+        <label>Номер телефона:</label>
+        <span th:text="*{phone}"></span>
+    </div>
+    <div class="profile-item">
+        <label>Роли пользователя:</label>
+        <span th:each="role : ${user.roles}" th:text="${role.name}+' '"></span>
+    </div>
 
-
+    <a th:href="@{/}" class="button">Перейти на стартовую страницу</a>
+    <br><br>
+    <a th:href="@{/logout}" class="button">Выйти из профиля</a>
+</div>
 </body>
 </html>

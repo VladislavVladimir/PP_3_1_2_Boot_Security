@@ -1,11 +1,43 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>Spring Security Example</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}"/>
 </head>
 <body>
 <h1>Welcome to Index PAGE!</h1>
+<h1>Выполняю задание 3.1.2!</h1>
+<h1>Мое первое Spring Security приложение</h1>
+<h2 class="info-text">Версия 1.0 SNAPSHOT</h2>
+<br>
+<div class="link-container">
+    <div th:if="${username!=null}">
+        <h1>Мне кажется, что вы уже авторизованы</h1>
+        <h1 th:text="'Вот ваш логин: ' + ${username}"></h1>
+        <br>
 
+        <!-- Проверка наличия роли User -->
+        <div th:if="${roles.contains('ROLE_USER')}">
+            <a th:href="@{/user}" class="button">Здесь подробная информация вашего профиля</a>
+            <br><br>
+        </div>
+
+        <!-- Проверка наличия роли Admin -->
+        <div th:if="${roles.contains('ROLE_ADMIN')}">
+            <a th:href="@{/admin}" class="button">Панель администратора</a>
+            <br><br>
+        </div>
+
+        <h1>Ниже - кнопка разлогиниться</h1>
+        <a th:href="@{/logout}" class="button">Выйти из профиля</a>
+    </div>
+    <div th:if="${username==null}">
+        <a th:href="@{/user}" class="button">Войти в учетную запись</a>
+        <br><br>
+        <a th:href="@{/registration}" class="button">Регистрация новой учетной записи</a>
+    </div>
+</div>
 
 </body>
 </html>
