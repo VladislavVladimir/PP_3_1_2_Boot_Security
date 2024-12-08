@@ -16,21 +16,15 @@ public class RoleServiceImp implements RoleService {
     @Autowired
     public RoleServiceImp(RoleDao roleDao) {
         this.roleDao = roleDao;
-
-        //стартовая настройка ролей, доступна в версии SNAPSHOT 1.0
-        createIfNotExists(new Role("ROLE_ADMIN"));      //роль админа
-        createIfNotExists(new Role("ROLE_USER"));       //роль обычного пользователя
-        createIfNotExists(new Role("ROLE_MODERATOR"));  //роли без бизнес-логики - для демонстрации
-        createIfNotExists(new Role("ROLE_SUPERADMIN"));
-        createIfNotExists(new Role("ROLE_MANAGER"));
     }
 
     @Override
-    public void createIfNotExists(Role role) {
+    public Role saveIfNotExists(Role role) {
         Role existingRole = roleDao.findByName(role.getName());
         if (existingRole == null) {
-            roleDao.save(role); // Если роль не существует, создаем новую
+            existingRole = roleDao.save(role);
         }
+        return existingRole;
     }
 
     @Override

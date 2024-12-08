@@ -1,32 +1,28 @@
 package ru.kata.spring.boot_security.demo.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import ru.kata.spring.boot_security.demo.dao.RoleDao;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
-import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional
 public class UserServiceImp implements UserService, UserDetailsService {
     private final UserDao userDao;
-    private final RoleDao roleDao;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserServiceImp(UserDao userDao, RoleDao roleDao) {
+    public UserServiceImp(UserDao userDao, PasswordEncoder passwordEncoder) {
         this.userDao = userDao;
-        this.roleDao = roleDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -50,33 +46,26 @@ public class UserServiceImp implements UserService, UserDetailsService {
     }
 
     @Override
-    public void updateUser(User user, BindingResult bindingResult) {
-        if (hasProblemValid(user, bindingResult)) return;
-
-        User updateUser = userDao.findByUsername(user.getUsername());
-        if (!updateUser.getPassword().equals(user.getPassword())) { //если пароль был изменен, то его нужно зашифровать
-            user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+    public void saveUser(User user) {
+        if (user.getId() > 0) {
+            User updateUser = userDao.getById(user.getId());
+            if (!updateUser.getPassword().equals(user.getPassword())) { //если пароль был изменен, то его нужно зашифровать
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            user.setTimeRegister(updateUser.getTimeRegister()); // дата регистрации пользователя не меняется
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setTimeRegister(new Date());   //дата регистрации
         }
-        user.setTimeRegister(updateUser.getTimeRegister()); // дата регистрации пользователя не меняется
+
         userDao.save(user);
     }
 
     @Override
-    public void createUser(User user, BindingResult bindingResult) {
+    public void saveUser(User user, BindingResult bindingResult) {
         if (hasProblemValid(user, bindingResult)) return;
 
-        user.setTimeRegister(new Date());   //дата регистрации
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        if (user.getRoles().isEmpty()) {    //настройки для регистрации новых пользователей
-            user.addRole(roleDao.findByName("ROLE_USER"));  //роль пользователя по умолчанию
-        }
-
-        //функция для создания самого первого админа, доступна в версии SNAPSHOT 1.0
-        if (Objects.equals(user.getUsername(), "admin")) {
-           Role roleAdmin = roleDao.findByName("ROLE_ADMIN");
-           user.addRole(roleAdmin);
-        }
-        userDao.save(user);
+        saveUser(user);
     }
 
     private boolean hasProblemValid(User user, BindingResult bindingResult) {
@@ -102,6 +91,7 @@ public class UserServiceImp implements UserService, UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(String.format("User %s not found", username));
         }
+        Hibernate.initialize(user.getRoles()); //загружаем роли
         return user;
     }
 }

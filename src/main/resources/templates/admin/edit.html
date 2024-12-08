@@ -35,13 +35,13 @@
             <input type="tel" id="phone" th:field="*{phone}" required /><br/>
             <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="error"></div>
 
-            <div class="form-group">
-                <label for="enabled">Активность учетной записи:</label>
-                <select id="enabled" name="enabled" th:field="*{enabled}" class="styled-select">
-                    <option value="true" th:text="'активен'"></option>
-                    <option value="false" th:text="'заблокирован'"></option>
-                </select>
-            </div>
+<!--            <div class="form-group">-->
+<!--                <label for="enabled">Активность учетной записи:</label>-->
+<!--                <select id="enabled" name="enabled" th:field="*{enabled}" class="styled-select">-->
+<!--                    <option value="true" th:text="'активен'"></option>-->
+<!--                    <option value="false" th:text="'заблокирован'"></option>-->
+<!--                </select>-->
+<!--            </div>-->
 
             <div class="form-group">
                 <label>Роли пользователя:</label>

@@ -55,11 +55,7 @@ public class AdminsController {
 
     @PostMapping("/edit")
     public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model) {
-        if (user.getId() == 0) {
-            userService.createUser(user, bindingResult);
-        } else {
-            userService.updateUser(user, bindingResult);
-        }
+        userService.saveUser(user, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("infoText", "Пожалуйста, исправьте ошибки в форме.");
             model.addAttribute("availableRoles", roleService.listRoles());
